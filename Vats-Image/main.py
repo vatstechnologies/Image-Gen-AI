@@ -32,9 +32,9 @@ if option == "Generate Text":
         if user_input:
             with st.spinner("Generating text..."):
                 try:
-                    # Using GPT-3.5 instead of GPT-4
+                    # Use GPT-3.5 model for free-tier
                     response = openai.Completion.create(
-                        model="gpt-3.5-turbo",  # Updated to GPT-3.5
+                        model="text-davinci-003",  # or gpt-3.5-turbo
                         prompt=user_input,
                         max_tokens=200
                     )

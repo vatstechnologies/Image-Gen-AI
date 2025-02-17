@@ -3,3 +3,4 @@ transformers
 torch
 requests
 Pillow
+pyttsx3==2.90

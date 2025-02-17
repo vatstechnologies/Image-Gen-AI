@@ -1,93 +1,76 @@
-import subprocess
-import sys
-
-# Function to install missing packages dynamically
-def install(package):
-    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-
-# Attempting to import the required libraries, and installing them if not present
-try:
-    import streamlit as st
-except ImportError:
-    install("streamlit")
-
-try:
-    import torch
-except ImportError:
-    install("torch")
-
-try:
-    from PIL import Image
-except ImportError:
-    install("Pillow")
-
-try:
-    from transformers import pipeline
-except ImportError:
-    install("transformers")
-
-try:
-    import pyttsx3
-except ImportError:
-    install("pyttsx3")
-
-# Now, proceed with the rest of your code
+import streamlit as st
 from transformers import pipeline
+import requests
+from PIL import Image
+import pyttsx3
+import io
 
-# Streamlit app title
-st.title("🖼️✨ VatsGenix - AI Image & Text Generator")
+# Initialize Hugging Face text generation pipeline
+generator = pipeline("text-generation", model="gpt2")  # You can replace "gpt2" with other models
 
-# Sidebar for navigation
+# Streamlit App Title
+st.title("🖼️✨ VatsGenix.AI - Personalized Image & Text Generator")
+
+# Sidebar for Navigation
 st.sidebar.title("🔍 Select Mode")
 option = st.sidebar.radio("Choose an AI Task:", ["Generate Text", "Generate Image", "Text-to-Speech"])
 
-# ========================== TEXT GENERATION USING HUGGING FACE ============================
+### ========================== TEXT GENERATION ============================
 if option == "Generate Text":
     st.subheader("📝 AI-Powered Text Generation")
-    user_input = st.text_area("Enter your prompt:", "Write a futuristic story about AI.")
+    user_input = st.text_area("Anurag's AI Is waiting for your Prompt:", "Write a futuristic story about AI.")
 
     if st.button("Generate Text"):
         if user_input:
             with st.spinner("Generating text..."):
                 try:
-                    # Use Hugging Face's GPT-2 or GPT-Neo model for text generation (free models)
-                    generator = pipeline('text-generation', model='gpt2')
-                    generated_text = generator(user_input, max_length=500, num_return_sequences=1)
+                    # Generate text using Hugging Face's GPT-2 (or other available models)
+                    generated_text = generator(user_input, max_length=500, num_return_sequences=1)[0]["generated_text"]
                     st.success("✅ Successfully generated!")
-                    st.write(generated_text[0]['generated_text'])
+                    st.write(generated_text)
                 except Exception as e:
                     st.error(f"⚠️ Error: {e}")
 
-# ========================== IMAGE GENERATION USING HUGGING FACE ============================
+### ========================== IMAGE GENERATION ============================
 elif option == "Generate Image":
     st.subheader("🖼️ AI-Powered Image Generation")
-    img_prompt = st.text_area("Enter an image description:", "A futuristic cyberpunk city at night.")
+    img_prompt = st.text_area("Enter an image description:", "Image Generation Is In Progress !")
 
     if st.button("Generate Image"):
         if img_prompt:
             with st.spinner("Generating image..."):
                 try:
-                    # Using Hugging Face's stable-diffusion model for image generation
-                    generator = pipeline('image-generation', model='CompVis/stable-diffusion-v-1-4-original')
-                    image = generator(img_prompt)[0]
-                    st.image(image, caption="Generated Image")
-                    st.success("✅ Successfully generated!")
+                    # Use OpenAI or Hugging Face for image generation (OpenAI is an example here)
+                    # You can replace this with any image generation API or Hugging Face model
+                    response = requests.post(
+                        "https://api.openai.com/v1/images/generations",
+                        headers={"Authorization": f"Bearer YOUR_OPENAI_API_KEY"},
+                        json={"prompt": img_prompt, "n": 1, "size": "1024x1024"}
+                    )
+                    image_url = response.json()['data'][0]['url']
+                    image_response = requests.get(image_url)
+                    img = Image.open(io.BytesIO(image_response.content))
+                    st.image(img, caption="Generated Image")
+                    st.success("✅ Successfully generated image!")
                 except Exception as e:
                     st.error(f"⚠️ Error: {e}")
 
-# ========================== TEXT-TO-SPEECH USING pyttsx3 ============================
+### ========================== TEXT-TO-SPEECH ============================
 elif option == "Text-to-Speech":
     st.subheader("🔊 AI-Powered Text-to-Speech")
-    tts_text = st.text_area("Enter text to convert into speech:", "Hello, this is an AI-generated voice.")
+    tts_text = st.text_area("Enter text to convert into speech:", "TTS Is In Progress !!")
 
     if st.button("Convert to Speech"):
         if tts_text:
             with st.spinner("Converting to speech..."):
                 try:
-                    # Using pyttsx3 for offline Text-to-Speech
+                    # Convert text to speech using pyttsx3 (offline, works without API)
                     engine = pyttsx3.init()
-                    engine.say(tts_text)
+                    engine.save_to_file(tts_text, 'output.mp3')
                     engine.runAndWait()
+
+                    # Play the audio file using Streamlit
+                    st.audio('output.mp3', format="audio/mp3")
                     st.success("✅ Successfully generated speech!")
                 except Exception as e:
                     st.error(f"⚠️ Error: {e}")

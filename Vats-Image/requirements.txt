@@ -1,6 +1,5 @@
-pyttsx3==2.90
 streamlit
-transformers
-torch
-requests
-Pillow
+transformers==4.27.4
+torch==1.13.1
+TTS==0.11.0
+Pillow==9.0.0

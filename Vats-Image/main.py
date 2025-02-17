@@ -2,22 +2,16 @@ import streamlit as st
 import openai
 import os
 import requests
-from dotenv import load_dotenv
-from PIL import Image
-from io import BytesIO
 
-# Load environment variables from .env
-load_dotenv()
+# Access the secrets from Streamlit Cloud
+OPENAI_API_KEY = st.secrets["openai"]["api_key"]
+ELEVEN_LABS_API_KEY = st.secrets["elevenlabs"]["api_key"]
 
-# OpenAI API Key
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+# Set OpenAI API key
 openai.api_key = OPENAI_API_KEY
 
-# 11 Labs API Key (Optional for Text-to-Speech)
-ELEVEN_LABS_API_KEY = os.getenv("ELEVEN_LABS_API_KEY")
-
 # Streamlit App Title
-st.title("🖼️✨ VatsGenix.AI - Image & Text Generator")
+st.title("🖼️✨ VatsGenix - AI Image & Text Generator")
 
 # Sidebar for Navigation
 st.sidebar.title("🔍 Select Mode")

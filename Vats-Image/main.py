@@ -2,16 +2,22 @@ import streamlit as st
 import openai
 import os
 import requests
+from dotenv import load_dotenv
+from PIL import Image
+from io import BytesIO
 
-# Access the secrets from Streamlit Cloud
+# Load environment variables from .env
+load_dotenv()
+
+# OpenAI API Key from Streamlit Secrets
 OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
-ELEVEN_LABS_API_KEY = st.secrets["ELEVEN_LABS_API_KEY"]
-
-# Set OpenAI API key
 openai.api_key = OPENAI_API_KEY
 
+# 11 Labs API Key from Streamlit Secrets
+ELEVEN_LABS_API_KEY = st.secrets["ELEVEN_LABS_API_KEY"]
+
 # Streamlit App Title
-st.title("🖼️✨ VatsGenix - AI Image & Text Generator")
+st.title("🖼️✨ VatsGenix.AI - Personalized Image & Text Generator")
 
 # Sidebar for Navigation
 st.sidebar.title("🔍 Select Mode")
@@ -26,13 +32,13 @@ if option == "Generate Text":
         if user_input:
             with st.spinner("Generating text..."):
                 try:
-                    response = openai.ChatCompletion.create(
-                        model="gpt-4",
-                        messages=[{"role": "system", "content": "You are a helpful AI assistant."},
-                                  {"role": "user", "content": user_input}],
+                    # Using GPT-3.5 instead of GPT-4
+                    response = openai.Completion.create(
+                        model="gpt-3.5-turbo",  # Updated to GPT-3.5
+                        prompt=user_input,
                         max_tokens=200
                     )
-                    generated_text = response['choices'][0]['message']['content']
+                    generated_text = response.choices[0].text.strip()
                     st.success("✅ Successfully generated!")
                     st.write(generated_text)
                 except Exception as e:

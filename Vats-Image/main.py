@@ -4,8 +4,8 @@ import os
 import requests
 
 # Access the secrets from Streamlit Cloud
-OPENAI_API_KEY = st.secrets["openai"]["api_key"]
-ELEVEN_LABS_API_KEY = st.secrets["elevenlabs"]["api_key"]
+OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
+ELEVEN_LABS_API_KEY = st.secrets["ELEVEN_LABS_API_KEY"]
 
 # Set OpenAI API key
 openai.api_key = OPENAI_API_KEY
